@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.elkarte.net/site/package-info">
+<!--
+/**
+ * @package SimpleAds
+ *
+ * @author [SiNaN]
+ * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
+ * @license BSD 3-clause
+ *
+ * @version 1.0.1
+ */
+-->
+<package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:elk="http://www.elkarte.net/">
+	<id>[SiNaN]:SimpleAds</id>
+	<name>SimpleAds</name>
+	<version>1.0.1</version>
+	<type>modification</type>
+	<install for="1.0 - 1.0.99">
+		<readme parsebbc="true">readme.txt</readme>
+		<require-file name="Ads.integration.php" destination="SOURCEDIR" />
+		<require-file name="ManageAds.controller.php" destination="ADMINDIR" />
+		<require-file name="Ads.subs.php" destination="SUBSDIR" />
+		<require-file name="AdsAdmin.subs.php" destination="SUBSDIR" />
+		<require-file name="Ads.template.php" destination="THEMEDIR" />
+		<require-file name="ManageAds.template.php" destination="THEMEDIR" />
+		<require-file name="ManageAds.english.php" destination="LANGUAGEDIR/english" />
+		<require-file name="manageads.css" destination="THEMEDIR/css" />
+		<require-file name="ads.js" destination="THEMEDIR/scripts" />
+		<require-file name="manageads.js" destination="THEMEDIR/scripts" />
+		<require-file name="ads.png" destination="IMAGESDIR/admin" />
+		<require-dir name="sa" destination="IMAGESDIR" />
+		<database>database.php</database>
+		<hook hook="integrate_theme_include" function="SUBSDIR/Ads.subs.php" />
+		<hook hook="integrate_load_theme" function="load_ads" />
+		<hook hook="integrate_admin_areas" file="SOURCEDIR/Ads.integration.php" function="iaa_ads" />
+		<hook hook="integrate_exit" file="SUBSDIR/Ads.subs.php" function="update_ad_impressions" />
+		<hook hook="integrate_action_boardindex_after" file="SOURCEDIR/Ads.integration.php" function="ibia_ads" />
+		<hook hook="integrate_prepare_display_context" file="SOURCEDIR/Ads.integration.php" function="ipdc_ads" />
+		<hook hook="integrate_display_topic" file="SOURCEDIR/Ads.integration.php" function="idt_ads" />
+	</install>
+	<uninstall for="1.0 - 1.0.99">
+		<hook reverse="true" hook="integrate_theme_include" function="SUBSDIR/Ads.subs.php" />
+		<hook reverse="true" hook="integrate_load_theme" function="load_ads" />
+		<hook reverse="true" hook="integrate_admin_areas" file="SOURCEDIR/AdsIntegration.php" function="iaa_ads"/>
+		<hook reverse="true" hook="integrate_exit" file="SUBSDIR/Ads.subs.php" function="update_ad_impressions" />
+		<hook reverse="true" hook="integrate_action_boardindex_after" file="SOURCEDIR/Ads.integration.php" function="ibia_ads" />
+		<hook reverse="true" hook="integrate_prepare_display_context" file="SOURCEDIR/Ads.integration.php" function="ipdc_ads" />
+		<hook reverse="true" hook="integrate_display_topic" file="SOURCEDIR/Ads.integration.php" function="idt_ads" />
+		<remove-file name="SOURCEDIR/Ads.integration.php" />
+		<remove-file name="ADMINDIR/ManageAds.controller.php" />
+		<remove-file name="SUBSDIR/Ads.subs.php" />
+		<remove-file name="SUBSDIR/AdsAdmin.subs.php" />
+		<remove-file name="THEMEDIR/Ads.template.php" />
+		<remove-file name="THEMEDIR/ManageAds.template.php" />
+		<remove-file name="LANGUAGEDIR/english/ManageAds.english.php" />
+		<remove-file name="THEMEDIR/css/manageads.css" />
+		<remove-file name="THEMEDIR/scripts/ads.js" />
+		<remove-file name="THEMEDIR/scripts/manageads.js" />
+		<remove-file name="IMAGESDIR/admin/ads.png" />
+		<remove-dir name="IMAGESDIR/sa" />
+	</uninstall>
+</package-info>
