@@ -91,9 +91,9 @@ function get_ad_data($id_ad)
 /**
  * Callback function for create list to list all ads in the system
  *
- * @param type $start
- * @param type $items_per_page
- * @param type $sort
+ * @param int $start
+ * @param int $items_per_page
+ * @param string $sort
  */
 function get_ads_data($start, $items_per_page, $sort)
 {
@@ -134,6 +134,7 @@ function get_ads_data($start, $items_per_page, $sort)
 /**
  * Determines how many ads are in the system
  * callback function used by createlist
+ *
  * @return int
  */
 function get_ads_count()
@@ -182,7 +183,7 @@ function get_ad_expiration($duration)
 /**
  * Remove an ad from the system
  *
- * @param type $id
+ * @param int $id
  */
 function delete_ad($id)
 {
@@ -524,8 +525,9 @@ function get_ads_actions()
 }
 
 /**
- *
- * @return type
+ * Fetch the allowed ad postions for use in templates etc
+
+ * @return string[]
  */
 function get_ads_positions()
 {
@@ -550,7 +552,7 @@ function get_ads_positions()
 /**
  * Builds the predefined helper templates for ads
  *
- * @return type
+ * @return string[]
  */
 function get_ads_body_templates()
 {
