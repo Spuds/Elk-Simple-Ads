@@ -119,7 +119,7 @@ function get_ads_data($start, $items_per_page, $sort)
 		if (empty($row['duration']))
 			$row['expires'] = $txt['sa_generic_never'];
 		else
-			$row['expires'] = timeformat($row['created'] + $row['duration'], '%d/%m/%y');
+			$row['expires'] = standardTime($row['created'] + $row['duration'], '%d/%m/%y');
 
 		$row['status_image'] = $row['status'] ? 'active' : 'disabled';
 		$row['status'] = $row['expired'] ? $txt['sa_generic_expired'] : ($row['status'] ? $txt['sa_generic_active'] : $txt['sa_generic_disabled']);
