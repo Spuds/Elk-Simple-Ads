@@ -239,10 +239,8 @@ class ManageAds_Controller extends Action_Controller
 		{
 			checkSession();
 
-			$values = array();
-
 			// Our tempalte field names
-			$fields = array(
+			$this->fields = array(
 				'name' => 'text',
 				'body' => 'text',
 				'positions' => 'array_int',
@@ -256,111 +254,50 @@ class ManageAds_Controller extends Action_Controller
 				'status' => 'int',
 			);
 
-			// Sanitize each field as defined
-			foreach ($fields as $name => $type)
-			{
-				if ($type == 'text')
-					$values[$name] = !empty($_POST[$name]) ? Util::htmlspecialchars($_POST[$name], ENT_QUOTES) : '';
-				elseif ($type == 'int')
-					$values[$name] = !empty($_POST[$name]) ? (int) $_POST[$name] : 0;
-				elseif ($type == 'array_int')
-				{
-					if (!empty($_POST[$name]) && is_array($_POST[$name]))
-					{
-						$temp = array();
-						foreach ($_POST[$name] as $item)
-							$temp[] = (int) $item;
+			// Clean the field values as defined by fields
+			$this->values = $this->_sanitizeValues();
 
-						$values[$name] = implode(',', $temp);
-					}
-					else
-						$values[$name] = '';
-
-					$fields[$name] = 'text';
-				}
-			}
-
-			$default_display = array();
-
-			// All the actions which inspire an ad
-			if (!empty($_POST['actions']) && is_array($_POST['actions']))
-			{
-				foreach ($_POST['actions'] as $action)
-					$default_display[] = Util::htmlspecialchars($action, ENT_QUOTES);
-			}
-
-			// All the boards where an ad can appear
-			if (!empty($_POST['boards']) && is_array($_POST['boards']))
-			{
-				foreach ($_POST['boards'] as $board)
-					$default_display[] = (int) $board;
-			}
-
+			// Where we intend / can to show these
+			$default_display = $this->_setDefaultDisplay();
 			if (!empty($default_display))
-				$values['default_display'] = implode(',', $default_display);
+				$this->values['default_display'] = implode(',', $default_display);
 
 			// The groups that will see the ad
-			$allowed_groups = array();
-			$denied_groups = array();
-			if (!empty($_POST['membergroups']) && is_array($_POST['membergroups']))
-			{
-				foreach ($_POST['membergroups'] as $id => $value)
-				{
-					if ($value == 1)
-						$allowed_groups[] = (int) $id;
-					elseif ($value == -1)
-						$denied_groups[] = (int) $id;
-				}
-			}
-
-			if (!empty($allowed_groups))
-				$values['allowed_groups'] = implode(',', $allowed_groups);
-
-			if (!empty($denied_groups))
-				$values['denied_groups'] = implode(',', $denied_groups);
+			$this->_setAccess();
 
 			// Expiration date for the ad
-			if (!empty($_POST['expiration']) && $_POST['expiration'] > 0 && !empty($_POST['expiration_type']))
-			{
-				if ($_POST['expiration_type'] == 3 && $_POST['expiration'] > 50)
-					$_POST['expiration'] = 50;
+			$this->_setExpiration();
 
-				$values['duration'] = ((int) $_POST['expiration']) * 86400 * ($_POST['expiration_type'] == 3 ? 365 : ($_POST['expiration_type'] == 2 ? 30 : 1));
-			}
-
-			if (Util::htmltrim($values['name']) === '')
-				fatal_lang_error('sa_error_empty_name', false);
-
-			if (Util::htmltrim($values['body']) === '')
-				fatal_lang_error('sa_error_empty_body', false);
+			// Any reason not to continue?
+			$this->_checkErrors();
 
 			// First time for this ad, set the creation date/time
 			if ($context['is_new'])
 			{
-				$fields['created'] = 'int';
-				$values['created'] = time();
-				add_ad_data($fields, $values);
+				$this->fields['created'] = 'int';
+				$this->values['created'] = time();
+				add_ad_data($this->fields, $this->values);
 			}
-			// Editing an add, lets get additional data liek clicks, impressions, etc
+			// Editing an add, lets get additional data like clicks, impressions, etc
 			else
 			{
 				$current_data = get_ad_data($ad_id);
 				$updated = array('duration', 'max_clicks', 'max_impressions');
 				foreach ($updated as $field)
-					$current_data[$field] = $values[$field];
+					$current_data[$field] = $this->values[$field];
 
 				if ($current_data['expired'] && !is_ad_expired($current_data))
 				{
-					$fields['expired'] = 'int';
-					$values['expired'] = 0;
+					$this->fields['expired'] = 'int';
+					$this->values['expired'] = 0;
 				}
 
 				$update_fields = array();
-				foreach ($fields as $name => $type)
+				foreach ($this->fields as $name => $type)
 					$update_fields[] = $name . ' = {' . $type . ':' . $name . '}';
 
-				$values['ad_id'] = $ad_id;
-				update_ad_data($update_fields, $values);
+				$this->values['ad_id'] = $ad_id;
+				update_ad_data($update_fields, $this->values);
 			}
 
 			redirectexit('action=admin;area=ads;sa=ads');
@@ -394,6 +331,121 @@ class ManageAds_Controller extends Action_Controller
 		$context['body_template'] = get_ads_body_templates();
 		$context['page_title'] = $context['is_new'] ? $txt['sa_ads_add_title'] : $txt['sa_ads_edit_title'];
 		$context['sub_template'] = 'ads_edit';
+	}
+
+	/**
+	 * No ad name or ad body then bail now
+	 */
+	private function checkErrors()
+	{
+		if (Util::htmltrim($this->values['name']) === '')
+			fatal_lang_error('sa_error_empty_name', false);
+
+		if (Util::htmltrim($this->values['body']) === '')
+			fatal_lang_error('sa_error_empty_body', false);
+	}
+
+	/**
+	 * Set the ads expiration date if one has been supplied
+	 */
+	private function _setExpiration()
+	{
+		if (!empty($_POST['expiration']) && $_POST['expiration'] > 0 && !empty($_POST['expiration_type']))
+		{
+			if ($_POST['expiration_type'] == 3 && $_POST['expiration'] > 50)
+				$_POST['expiration'] = 50;
+
+			$this->values['duration'] = ((int) $_POST['expiration']) * 86400 * ($_POST['expiration_type'] == 3 ? 365 : ($_POST['expiration_type'] == 2 ? 30 : 1));
+		}
+	}
+
+	/**
+	 * Set the ads access groups so we only show it as defined
+	 */
+	private function _setAccess()
+	{
+		// The groups that will see the ad
+		$allowed_groups = array();
+		$denied_groups = array();
+
+		if (!empty($_POST['membergroups']) && is_array($_POST['membergroups']))
+		{
+			foreach ($_POST['membergroups'] as $id => $value)
+			{
+				if ($value == 1)
+					$allowed_groups[] = (int) $id;
+				elseif ($value == -1)
+					$denied_groups[] = (int) $id;
+			}
+		}
+
+		if (!empty($allowed_groups))
+			$this->values['allowed_groups'] = implode(',', $allowed_groups);
+
+		if (!empty($denied_groups))
+			$this->values['denied_groups'] = implode(',', $denied_groups);
+	}
+
+	/**
+	 * Set the actions and boards where an add can be placed.
+	 *
+	 * @return mixed[]
+	 */
+	private function _setDefaultDisplay()
+	{
+		$default_display = array();
+
+		// All the actions which inspire an ad
+		if (!empty($_POST['actions']) && is_array($_POST['actions']))
+		{
+			foreach ($_POST['actions'] as $action)
+				$default_display[] = Util::htmlspecialchars($action, ENT_QUOTES);
+		}
+
+		// All the boards where an ad can appear
+		if (!empty($_POST['boards']) && is_array($_POST['boards']))
+		{
+			foreach ($_POST['boards'] as $board)
+				$default_display[] = (int) $board;
+		}
+
+		return $default_display;
+	}
+
+	/**
+	 * Ensures that each post value is set to a specifed field type
+	 */
+	private function _sanitizeValues()
+	{
+			// Sanitize each field as defined
+			foreach ($this->fields as $name => $type)
+			{
+				switch ($type)
+				{
+					case 'text':
+						$this->values[$name] = !empty($_POST[$name]) ? Util::htmlspecialchars($_POST[$name], ENT_QUOTES) : '';
+						break;
+					case 'int':
+						$this->values[$name] = !empty($_POST[$name]) ? (int) $_POST[$name] : 0;
+						break;
+					case 'array_int':
+						if (!empty($_POST[$name]) && is_array($_POST[$name]))
+						{
+							$temp = array();
+							foreach ($_POST[$name] as $item)
+								$temp[] = (int) $item;
+
+							$this->values[$name] = implode(',', $temp);
+						}
+						else
+							$this->values[$name] = '';
+
+						$this->fields[$name] = 'text';
+						break;
+					default:
+						break;
+				}
+			}
 	}
 
 	/**
@@ -524,8 +576,7 @@ class ManageAds_Controller extends Action_Controller
 		{
 			checkSession();
 
-			$values = array();
-			$fields = array(
+			$this->fields = array(
 				'name' => 'text',
 				'namespace' => 'text',
 				'type' => 'int',
@@ -533,27 +584,16 @@ class ManageAds_Controller extends Action_Controller
 			);
 
 			// Sanitize the fields as defined
-			foreach ($fields as $name => $type)
-			{
-				if ($type == 'text')
-					$values[$name] = !empty($_POST[$name]) ? Util::htmlspecialchars($_POST[$name], ENT_QUOTES) : '';
-				elseif ($type == 'int')
-					$values[$name] = !empty($_POST[$name]) ? (int) $_POST[$name] : 0;
-			}
+			$this->values = $this->_sanitizeValues();
 
-			if (Util::htmltrim($values['name']) === '')
-				fatal_lang_error('sa_error_empty_name', false);
-
-			if (Util::htmltrim($values['namespace']) === '')
-				fatal_lang_error('sa_error_empty_namespace', false);
-			elseif (preg_replace('~[A-Za-z0-9_]~', '', $values['namespace']) !== '')
-				fatal_lang_error('sa_error_invalid_namespace', false);
+			// Any reason not to continue?
+			$this->_positionError();
 
 			if ($context['is_new'])
 			{
-				add_position_data($fields, $values);
+				add_position_data($this->fields, $this->values);
 
-				$context['namespace'] = $values['namespace'];
+				$context['namespace'] = $this->values['namespace'];
 				$context['page_title'] = $txt['sa_positions_notice_title'];
 				$context['sub_template'] = 'positions_notice';
 
@@ -565,9 +605,9 @@ class ManageAds_Controller extends Action_Controller
 				foreach ($fields as $name => $type)
 					$update_fields[] = $name . ' = {' . $type . ':' . $name . '}';
 
-				$values['position_id'] = $position_id;
+				$this->values['position_id'] = $position_id;
 
-				update_positions_data($update_fields, $values);
+				update_positions_data($update_fields, $this->values);
 
 				redirectexit('action=admin;area=ads;sa=positions');
 			}
@@ -588,6 +628,20 @@ class ManageAds_Controller extends Action_Controller
 
 		$context['page_title'] = $context['is_new'] ? $txt['sa_positions_add_title'] : $txt['sa_positions_edit_title'];
 		$context['sub_template'] = 'positions_edit';
+	}
+
+	/**
+	 * There are a few reasons we don't continue on bad data
+	 */
+	private function _positionError()
+	{
+		if (Util::htmltrim($values['name']) === '')
+			fatal_lang_error('sa_error_empty_name', false);
+
+		if (Util::htmltrim($values['namespace']) === '')
+			fatal_lang_error('sa_error_empty_namespace', false);
+		elseif (preg_replace('~[A-Za-z0-9_]~', '', $values['namespace']) !== '')
+			fatal_lang_error('sa_error_invalid_namespace', false);
 	}
 
 	/**
