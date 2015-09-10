@@ -18,6 +18,9 @@ if (!defined('ELK'))
  */
 class ManageAds_Controller extends Action_Controller
 {
+	protected $fields = array();
+	protected $values = array();
+
 	/**
 	 * Entry point, determines what action will be called based on the subaction
 	 */
@@ -239,7 +242,7 @@ class ManageAds_Controller extends Action_Controller
 		{
 			checkSession();
 
-			// Our tempalte field names
+			// Our template field names
 			$this->fields = array(
 				'name' => 'text',
 				'body' => 'text',
@@ -254,8 +257,8 @@ class ManageAds_Controller extends Action_Controller
 				'status' => 'int',
 			);
 
-			// Clean the field values as defined by fields
-			$this->values = $this->_sanitizeValues();
+			// Clean the values as defined by fields
+			$this->_sanitizeValues();
 
 			// Where we intend / can to show these
 			$default_display = $this->_setDefaultDisplay();
@@ -413,43 +416,45 @@ class ManageAds_Controller extends Action_Controller
 	}
 
 	/**
-	 * Ensures that each post value is set to a specifed field type
+	 * Ensures that each post value is set to a specified field type
+	 * Sets cleaned values in the $this->values var
 	 */
 	private function _sanitizeValues()
 	{
-			// Sanitize each field as defined
-			foreach ($this->fields as $name => $type)
+		// Sanitize each field as defined
+		foreach ($this->fields as $name => $type)
+		{
+			switch ($type)
 			{
-				switch ($type)
-				{
-					case 'text':
-						$this->values[$name] = !empty($_POST[$name]) ? Util::htmlspecialchars($_POST[$name], ENT_QUOTES) : '';
-						break;
-					case 'int':
-						$this->values[$name] = !empty($_POST[$name]) ? (int) $_POST[$name] : 0;
-						break;
-					case 'array_int':
-						if (!empty($_POST[$name]) && is_array($_POST[$name]))
-						{
-							$temp = array();
-							foreach ($_POST[$name] as $item)
-								$temp[] = (int) $item;
+				case 'text':
+					$this->values[$name] = !empty($_POST[$name]) ? Util::htmlspecialchars($_POST[$name], ENT_QUOTES) : '';
+					break;
+				case 'int':
+					$this->values[$name] = !empty($_POST[$name]) ? (int) $_POST[$name] : 0;
+					break;
+				case 'array_int':
+					if (!empty($_POST[$name]) && is_array($_POST[$name]))
+					{
+						$temp = array();
+						foreach ($_POST[$name] as $item)
+							$temp[] = (int) $item;
 
-							$this->values[$name] = implode(',', $temp);
-						}
-						else
-							$this->values[$name] = '';
+						$this->values[$name] = implode(',', $temp);
+					}
+					else
+						$this->values[$name] = '';
 
-						$this->fields[$name] = 'text';
-						break;
-					default:
-						break;
-				}
+					$this->fields[$name] = 'text';
+					break;
+				default:
+					break;
 			}
+		}
+
 	}
 
 	/**
-	 * Shows a listing of available ad postions
+	 * Shows a listing of available ad positions
 	 * - allows to remove or disable them
 	 */
 	public function action_list_positions()
@@ -584,7 +589,7 @@ class ManageAds_Controller extends Action_Controller
 			);
 
 			// Sanitize the fields as defined
-			$this->values = $this->_sanitizeValues();
+			$this->_sanitizeValues();
 
 			// Any reason not to continue?
 			$this->_positionError();
@@ -647,13 +652,13 @@ class ManageAds_Controller extends Action_Controller
 	/**
 	 * Get the data for the ads
 	 *
-	 * - Callback for createlist, fowards to get_ads_data
+	 * - Callback for createlist, forward to get_ads_data
 	 *
 	 * @param int $start
 	 * @param int $chunk_size
 	 * @param string $sort
 	 *
-	 * - Callback for createList(), fowards to get_ads_data
+	 * - Callback for createList(), forwards to get_ads_data
 	 */
 	public function list_get_ads_data($start, $chunk_size, $sort = '')
 	{
@@ -671,13 +676,13 @@ class ManageAds_Controller extends Action_Controller
 	}
 
 	/**
-	 * Get the data for the postions
+	 * Get the data for the positions
 	 *
 	 * @param int $start
 	 * @param int $chunk_size
 	 * @param string $sort
 	 *
-	 * - Callback for createList(), fowards to get_positions_data
+	 * - Callback for createList(), forwards to get_positions_data
 	 */
 	public function list_get_positions_data($start, $chunk_size, $sort = '')
 	{
