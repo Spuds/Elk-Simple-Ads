@@ -602,7 +602,7 @@ class ManageAds_Controller extends Action_Controller
 			else
 			{
 				$update_fields = array();
-				foreach ($fields as $name => $type)
+				foreach ($this->fields as $name => $type)
 					$update_fields[] = $name . ' = {' . $type . ':' . $name . '}';
 
 				$this->values['position_id'] = $position_id;
@@ -635,12 +635,12 @@ class ManageAds_Controller extends Action_Controller
 	 */
 	private function _positionError()
 	{
-		if (Util::htmltrim($values['name']) === '')
+		if (Util::htmltrim($this->values['name']) === '')
 			fatal_lang_error('sa_error_empty_name', false);
 
-		if (Util::htmltrim($values['namespace']) === '')
+		if (Util::htmltrim($this->values['namespace']) === '')
 			fatal_lang_error('sa_error_empty_namespace', false);
-		elseif (preg_replace('~[A-Za-z0-9_]~', '', $values['namespace']) !== '')
+		elseif (preg_replace('~[A-Za-z0-9_]~', '', $this->values['namespace']) !== '')
 			fatal_lang_error('sa_error_invalid_namespace', false);
 	}
 
