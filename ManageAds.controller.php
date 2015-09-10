@@ -336,7 +336,7 @@ class ManageAds_Controller extends Action_Controller
 	/**
 	 * No ad name or ad body then bail now
 	 */
-	private function checkErrors()
+	private function _checkErrors()
 	{
 		if (Util::htmltrim($this->values['name']) === '')
 			fatal_lang_error('sa_error_empty_name', false);
