@@ -8,13 +8,13 @@
  * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.1
+ * @version 1.0.2
  */
 -->
 <package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:elk="http://www.elkarte.net/">
 	<id>[SiNaN]:SimpleAds</id>
 	<name>SimpleAds</name>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<type>modification</type>
 	<install for="1.0 - 1.0.99">
 		<readme parsebbc="true">readme.txt</readme>
@@ -38,6 +38,7 @@
 		<hook hook="integrate_action_boardindex_after" file="SOURCEDIR/Ads.integration.php" function="ibia_ads" />
 		<hook hook="integrate_prepare_display_context" file="SOURCEDIR/Ads.integration.php" function="ipdc_ads" />
 		<hook hook="integrate_display_topic" file="SOURCEDIR/Ads.integration.php" function="idt_ads" />
+		<redirect url="index.php?action=admin;area=ads;sa=ads" timeout="5000" />
 	</install>
 	<uninstall for="1.0 - 1.0.99">
 		<hook reverse="true" hook="integrate_theme_include" function="SUBSDIR/Ads.subs.php" />
