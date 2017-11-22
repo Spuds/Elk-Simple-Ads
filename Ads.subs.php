@@ -11,14 +11,16 @@
  */
 
 if (!defined('ELK'))
+{
 	die('No access...');
+}
 
 /**
  * Load the ads for display
  * Determines what ads will display in what areas
  *
  * @throws \Elk_Exception
- * @return type
+ * @return boolean
  */
 function load_ads()
 {
@@ -31,7 +33,9 @@ function load_ads()
 
 	// Tracking them clicks
 	if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'update_ad_clicks')
+	{
 		update_ad_clicks();
+	}
 
 	// Don't ever show adds in for these actions
 	$ignore_actions = array('helpadmin', 'printpage', 'quotefast', 'spellcheck', 'dlattach', 'findmember', 'jsoption', 'requestmembers', 'jslocale', 'xmlpreview', 'suggest', '.xml', 'api', 'xmlhttp', 'verificationcode', 'viewquery', 'viewadminfile');
@@ -40,7 +44,9 @@ function load_ads()
 		|| isset($_REQUEST['debug'])
 		|| (!empty($_REQUEST['sa']) && !empty($_REQUEST['package']) && $_REQUEST['sa'] == 'uninstall2' && strpos($_REQUEST['package'], 'SimpleAds') !== false)
 		|| (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $ignore_actions)))
-		return;
+	{
+		return false;
+	}
 
 	// Ad template and css
 	loadTemplate('Ads');
@@ -60,7 +66,9 @@ function load_ads()
 		);
 		$positions = array();
 		while ($row = $db->fetch_assoc($request))
+		{
 			$positions[$row['id_position']] = $row;
+		}
 		$db->free_result($request);
 
 		cache_put_data('sa_positions', $positions, 240);
@@ -68,11 +76,15 @@ function load_ads()
 
 	// No postions, done
 	if (empty($positions))
-		return;
+	{
+		return true;
+	}
 
 	// Quick portal detection
 	if (empty($context['disable_sp']) && !empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1)
+	{
 		$portal = true;
+	}
 
 	// Load in all the active ads
 	$request = $db->query('', '
@@ -91,26 +103,36 @@ function load_ads()
 	{
 		// Skip if expired
 		if (is_ad_expired($row))
+		{
 			continue;
+		}
 
 		// Skip if its not for this user / group
 		if (!is_ad_allowed($row['allowed_groups'], $row['denied_groups']))
+		{
 			continue;
+		}
 
 		// Skip if it is not to be shown for this action
 		if (!is_ad_displayed($row['default_display'], $row['custom_display']))
+		{
 			continue;
+		}
 
 		$row['positions'] = !empty($row['positions']) ? explode(',', $row['positions']) : array();
 
 		foreach ($row['positions'] as $position)
 		{
 			if (!isset($positions[$position]))
+			{
 				continue;
+			}
 
 			// Dont want right/left ads on the portal
 			if (isset($portal) && in_array($position, array(6, 7)))
+			{
 				continue;
+			}
 
 			if (!isset($context['ads'][$positions[$position]['namespace']]))
 			{
@@ -128,7 +150,9 @@ function load_ads()
 
 	// Do we have any ads to spam them with
 	if (empty($context['ads']))
-		return;
+	{
+		return true;
+	}
 
 	loadJavascriptFile('ads.js', array('defer' => true));
 
@@ -139,9 +163,13 @@ function load_ads()
 	foreach ($temp_layers as $layer)
 	{
 		if ($layer === 'html')
+		{
 			$template_layers->addAfter('ads_outer', 'html');
+		}
 		elseif ($layer === 'body')
+		{
 			$template_layers->addAfter('ads_inner', 'body');
+		}
 	}
 }
 
@@ -150,7 +178,8 @@ function load_ads()
  * Updates the db counter for this ad
  * Used by xml
  *
- * @return type
+ * @throws \Elk_Exception
+ * @return null
  */
 function update_ad_clicks()
 {
@@ -160,7 +189,9 @@ function update_ad_clicks()
 
 	// No ad, no dice
 	if (empty($id_ad))
+	{
 		return;
+	}
 
 	$db->query('', '
 		UPDATE {db_prefix}sa_ads
@@ -185,7 +216,9 @@ function update_ad_impressions()
 
 	// No ad displayed, no impressions
 	if (empty($context['displayed_ads']))
+	{
 		return;
+	}
 
 	$db->query('', '
 		UPDATE {db_prefix}sa_ads
@@ -214,11 +247,17 @@ function is_ad_expired($data)
 	$expired = false;
 
 	if (!empty($data['duration']) && $data['created'] + $data['duration'] < time())
+	{
 		$expired = true;
+	}
 	elseif (!empty($data['max_impressions']) && $data['impressions'] >= $data['max_impressions'])
+	{
 		$expired = true;
+	}
 	elseif (!empty($data['max_clicks']) && $data['clicks'] >= $data['max_clicks'])
+	{
 		$expired = true;
+	}
 
 	// Set the expired flag
 	if ($expired)
@@ -258,9 +297,13 @@ function is_ad_allowed($allowed, $denied)
 
 		$is_allowed = false;
 		if (count(array_intersect($user_info['groups'], $denied)) > 0)
+		{
 			$is_allowed = false;
+		}
 		elseif (count(array_intersect($user_info['groups'], $allowed)) > 0)
+		{
 			$is_allowed = true;
+		}
 
 		$group_cache[$cache_key] = $is_allowed;
 	}
@@ -269,7 +312,7 @@ function is_ad_allowed($allowed, $denied)
 }
 
 /**
- * Determins is an ad should be displayed given where on the site the user is
+ * Determines is an ad should be displayed given where on the site the user is
  *
  * @param type $default
  * @param type $custom
@@ -319,17 +362,25 @@ function is_ad_displayed($default, $custom)
 			$default = !empty($default) ? explode(',', $default) : array();
 
 			if (!empty($action) && in_array($action, $default))
+			{
 				$display = true;
+			}
 			elseif (!empty($board) && in_array($board, $default))
+			{
 				$display = true;
+			}
 			elseif (in_array('board_index', $default) && empty($action) && empty($board) && count($_GET) < 1)
+			{
 				$display = true;
+			}
 		}
 		// Custom actions
 		elseif (!empty($custom))
 		{
 			if ($custom === 'all')
+			{
 				$display = true;
+			}
 			else
 			{
 				$variables = array(

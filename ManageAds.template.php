@@ -7,7 +7,7 @@
  * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.1
+ * @version 1.0.3
  */
 
 /**
@@ -46,8 +46,10 @@ function template_ads_edit()
 								<option value="" selected="selected"></option>';
 
 	foreach ($context['body_template'] as $label => $body)
+	{
 		echo '
 								<option value="', $body, '">', $label, '</option>';
+	}
 
 	echo '
 							</select>
@@ -141,10 +143,12 @@ function template_ads_edit()
 								<ul class="reset">';
 
 	foreach ($context['positions'] as $id => $label)
+	{
 		echo '
 									<li>
 										<input type="checkbox" name="positions[]" id="position_', $id, '" value="', $id, '"', in_array($id, $context['ad']['positions']) ? ' checked="checked"' : '', ' class="input_check"> <label for="position_', $id, '">', $label, '</label>
 									</li>';
+	}
 
 	echo '
 									<li>
@@ -174,9 +178,13 @@ function template_ads_edit()
 	{
 		$current = 0;
 		if (in_array($id, $context['ad']['allowed_groups']))
+		{
 			$current = 1;
+		}
 		elseif (in_array($id, $context['ad']['denied_groups']))
+		{
 			$current = -1;
+		}
 
 		echo '
 									<tr>
@@ -209,10 +217,12 @@ function template_ads_edit()
 								<ul class="reset">';
 
 	foreach ($context['actions'] as $id => $label)
+	{
 		echo '
 									<li>
 										<input type="checkbox" name="actions[]" id="action_', $id, '" value="', $id, '"', in_array($id, $context['ad']['default_display']) ? ' checked="checked"' : '', ' class="input_check"> <label for="action_', $id, '">', $label, '</label>
 									</li>';
+	}
 
 	echo '
 									<li>
@@ -233,10 +243,12 @@ function template_ads_edit()
 								<ul class="reset">';
 
 	foreach ($context['boards'] as $id => $label)
+	{
 		echo '
 									<li>
 										<input type="checkbox" name="boards[]" id="board_', $id, '" value="', $id, '"', in_array($id, $context['ad']['default_display']) ? ' checked="checked"' : '', ' class="input_check"> <label for="board_', $id, '">', $label, '</label>
 									</li>';
+	}
 
 	echo '
 									<li>
@@ -267,7 +279,7 @@ function template_ads_edit()
 }
 
 /**
- * List all the ad postions in the system
+ * List all the ad positions in the system
  */
 function template_list_positions()
 {
@@ -352,7 +364,7 @@ function template_positions_notice()
 }
 
 /**
- * Provide an xml respose to an active on/off toggle
+ * Provide an xml response to an active on/off toggle
  */
 function template_sa_change_status()
 {

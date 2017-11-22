@@ -11,7 +11,9 @@
  */
 
 if (!defined('ELK'))
+{
 	die('No access...');
+}
 
 /**
  * The admin ad controller
@@ -121,7 +123,9 @@ class ManageAds_Controller extends Action_Controller
 				obExit();
 			}
 			else
+			{
 				redirectexit('action=admin;area=ads;sa=ads');
+			}
 		}
 
 		// Generate the list add control for create list to use
@@ -264,7 +268,9 @@ class ManageAds_Controller extends Action_Controller
 			// Where we intend / can to show these
 			$default_display = $this->_setDefaultDisplay();
 			if (!empty($default_display))
+			{
 				$this->values['default_display'] = implode(',', $default_display);
+			}
 
 			// The groups that will see the ad
 			$this->_setAccess();
@@ -288,7 +294,9 @@ class ManageAds_Controller extends Action_Controller
 				$current_data = get_ad_data($ad_id);
 				$updated = array('duration', 'max_clicks', 'max_impressions');
 				foreach ($updated as $field)
+				{
 					$current_data[$field] = $this->values[$field];
+				}
 
 				if ($current_data['expired'] && !is_ad_expired($current_data))
 				{
@@ -298,7 +306,9 @@ class ManageAds_Controller extends Action_Controller
 
 				$update_fields = array();
 				foreach ($this->fields as $name => $type)
+				{
 					$update_fields[] = $name . ' = {' . $type . ':' . $name . '}';
+				}
 
 				$this->values['ad_id'] = $ad_id;
 				update_ad_data($update_fields, $this->values);
@@ -326,7 +336,9 @@ class ManageAds_Controller extends Action_Controller
 			);
 		}
 		else
+		{
 			$context['ad'] = get_ad_data($ad_id);
+		}
 
 		$context['positions'] = get_ads_positions();
 		$context['membergroups'] = get_ads_membergroups();
@@ -343,10 +355,14 @@ class ManageAds_Controller extends Action_Controller
 	private function _checkErrors()
 	{
 		if (Util::htmltrim($this->values['name']) === '')
+		{
 			fatal_lang_error('sa_error_empty_name', false);
+		}
 
 		if (Util::htmltrim($this->values['body']) === '')
+		{
 			fatal_lang_error('sa_error_empty_body', false);
+		}
 	}
 
 	/**
@@ -357,7 +373,9 @@ class ManageAds_Controller extends Action_Controller
 		if (!empty($_POST['expiration']) && $_POST['expiration'] > 0 && !empty($_POST['expiration_type']))
 		{
 			if ($_POST['expiration_type'] == 3 && $_POST['expiration'] > 50)
+			{
 				$_POST['expiration'] = 50;
+			}
 
 			$this->values['duration'] = ((int) $_POST['expiration']) * 86400 * ($_POST['expiration_type'] == 3 ? 365 : ($_POST['expiration_type'] == 2 ? 30 : 1));
 		}
@@ -377,17 +395,25 @@ class ManageAds_Controller extends Action_Controller
 			foreach ($_POST['membergroups'] as $id => $value)
 			{
 				if ($value == 1)
+				{
 					$allowed_groups[] = (int) $id;
+				}
 				elseif ($value == -1)
+				{
 					$denied_groups[] = (int) $id;
+				}
 			}
 		}
 
 		if (!empty($allowed_groups))
+		{
 			$this->values['allowed_groups'] = implode(',', $allowed_groups);
+		}
 
 		if (!empty($denied_groups))
+		{
 			$this->values['denied_groups'] = implode(',', $denied_groups);
+		}
 	}
 
 	/**
@@ -403,14 +429,18 @@ class ManageAds_Controller extends Action_Controller
 		if (!empty($_POST['actions']) && is_array($_POST['actions']))
 		{
 			foreach ($_POST['actions'] as $action)
+			{
 				$default_display[] = Util::htmlspecialchars($action, ENT_QUOTES);
+			}
 		}
 
 		// All the boards where an ad can appear
 		if (!empty($_POST['boards']) && is_array($_POST['boards']))
 		{
 			foreach ($_POST['boards'] as $board)
+			{
 				$default_display[] = (int) $board;
+			}
 		}
 
 		return $default_display;
@@ -438,12 +468,16 @@ class ManageAds_Controller extends Action_Controller
 					{
 						$temp = array();
 						foreach ($_POST[$name] as $item)
+						{
 							$temp[] = (int) $item;
+						}
 
 						$this->values[$name] = implode(',', $temp);
 					}
 					else
+					{
 						$this->values[$name] = '';
+					}
 
 					$this->fields[$name] = 'text';
 					break;
@@ -490,7 +524,9 @@ class ManageAds_Controller extends Action_Controller
 				obExit();
 			}
 			else
+			{
 				redirectexit('action=admin;area=ads;sa=positions');
+			}
 		}
 
 		$list_options = array(
@@ -609,7 +645,9 @@ class ManageAds_Controller extends Action_Controller
 			{
 				$update_fields = array();
 				foreach ($this->fields as $name => $type)
+				{
 					$update_fields[] = $name . ' = {' . $type . ':' . $name . '}';
+				}
 
 				$this->values['position_id'] = $position_id;
 
@@ -630,7 +668,9 @@ class ManageAds_Controller extends Action_Controller
 			);
 		}
 		else
+		{
 			$context['position'] = get_position_data($position_id);
+		}
 
 		$context['page_title'] = $context['is_new'] ? $txt['sa_positions_add_title'] : $txt['sa_positions_edit_title'];
 		$context['sub_template'] = 'positions_edit';
@@ -642,12 +682,18 @@ class ManageAds_Controller extends Action_Controller
 	private function _positionError()
 	{
 		if (Util::htmltrim($this->values['name']) === '')
+		{
 			fatal_lang_error('sa_error_empty_name', false);
+		}
 
 		if (Util::htmltrim($this->values['namespace']) === '')
+		{
 			fatal_lang_error('sa_error_empty_namespace', false);
+		}
 		elseif (preg_replace('~[A-Za-z0-9_]~', '', $this->values['namespace']) !== '')
+		{
 			fatal_lang_error('sa_error_invalid_namespace', false);
+		}
 	}
 
 	/**

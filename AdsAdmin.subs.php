@@ -11,7 +11,9 @@
  */
 
 if (!defined('ELK'))
+{
 	die('No access...');
+}
 
 /**
  * Insert an ad
@@ -76,7 +78,9 @@ function get_ad_data($id_ad)
 	{
 		$csv_fields = array('positions', 'default_display', 'allowed_groups', 'denied_groups');
 		foreach ($csv_fields as $field)
+		{
 			$row[$field] = !empty($row[$field]) ? explode(',', $row[$field]) : array();
+		}
 
 		$row['created'] = standardTime($row['created']);
 		$row['expiration'] = get_ad_expiration($row['duration']);
@@ -117,9 +121,13 @@ function get_ads_data($start, $items_per_page, $sort)
 	while ($row = $db->fetch_assoc($request))
 	{
 		if (empty($row['duration']))
+		{
 			$row['expires'] = $txt['sa_generic_never'];
+		}
 		else
+		{
 			$row['expires'] = standardTime($row['created'] + $row['duration'], '%d/%m/%y');
+		}
 
 		$row['status_image'] = $row['status'] ? 'active' : 'disabled';
 		$row['status'] = $row['expired'] ? $txt['sa_generic_expired'] : ($row['status'] ? $txt['sa_generic_active'] : $txt['sa_generic_disabled']);
@@ -144,8 +152,7 @@ function get_ads_count()
 	$request = $db->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}sa_ads',
-		array(
-		)
+		array()
 	);
 	list ($total_ads) = $db->fetch_row($request);
 	$db->free_result($request);
@@ -274,6 +281,7 @@ function update_postion_data($status)
 	);
 	list ($position_id, $status) = $db->fetch_row($request);
 	$db->free_result($request);
+
 	// Has to exist to update it
 	if (!empty($position_id))
 	{
@@ -315,14 +323,16 @@ function get_position_data($id_position)
 	);
 	$position = array();
 	while ($row = $db->fetch_assoc($request))
+	{
 		$position = $row;
+	}
 	$db->free_result($request);
 
 	return $position;
 }
 
 /**
- * Fetch all postion data in the system
+ * Fetch all position data in the system
  * Callback for createlist to show position listing
  *
  * @param int $start
@@ -371,8 +381,7 @@ function get_positions_count()
 	$request = $db->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}sa_positions',
-		array(
-		)
+		array()
 	);
 	list ($total_positions) = $db->fetch_row($request);
 	$db->free_result($request);
@@ -381,7 +390,7 @@ function get_positions_count()
 }
 
 /**
- * Update a postions data
+ * Update a positions data
  *
  * @param string[] $update_fields
  * @param mixed[] $values
@@ -424,7 +433,9 @@ function add_position_data($fields, $values)
 	$db->free_result($request);
 
 	if ($has_duplicate)
+	{
 		fatal_lang_error('sa_error_duplicate_namespace', false);
+	}
 
 	$db->insert('', '
 		{db_prefix}sa_positions',
@@ -463,7 +474,9 @@ function get_ads_membergroups()
 		)
 	);
 	while ($row = $db->fetch_assoc($request))
+	{
 		$groups[(int) $row['id_group']] = trim($row['group_name']);
+	}
 	$db->free_result($request);
 
 	return $groups;
@@ -489,7 +502,9 @@ function get_ads_boards()
 	);
 	$boards = array();
 	while ($row = $db->fetch_assoc($request))
+	{
 		$boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
+	}
 	$db->free_result($request);
 
 	return $boards;
@@ -510,16 +525,16 @@ function get_ads_actions()
 		'profile' => $txt['profile'],
 		'pm' => $txt['pm_short'],
 		'calendar' => $txt['calendar'],
-		'admin' =>  $txt['admin'],
-		'login' =>  $txt['login'],
-		'register' =>  $txt['register'],
-		'post' =>  $txt['post'],
-		'stats' =>  $txt['forum_stats'],
-		'search' =>  $txt['search'],
-		'mlist' =>  $txt['members_list'],
-		'moderate' =>  $txt['moderate'],
-		'help' =>  $txt['help'],
-		'who' =>  $txt['who_title'],
+		'admin' => $txt['admin'],
+		'login' => $txt['login'],
+		'register' => $txt['register'],
+		'post' => $txt['post'],
+		'stats' => $txt['forum_stats'],
+		'search' => $txt['search'],
+		'mlist' => $txt['members_list'],
+		'moderate' => $txt['moderate'],
+		'help' => $txt['help'],
+		'who' => $txt['who_title'],
 	);
 
 	return $actions;
@@ -527,7 +542,7 @@ function get_ads_actions()
 
 /**
  * Fetch the allowed ad positions for use in templates etc
-
+ *
  * @return string[]
  */
 function get_ads_positions()
@@ -539,12 +554,13 @@ function get_ads_positions()
 			id_position, name
 		FROM {db_prefix}sa_positions
 		ORDER BY id_position',
-		array(
-		)
+		array()
 	);
 	$positions = array();
 	while ($row = $db->fetch_assoc($request))
+	{
 		$positions[$row['id_position']] = $row['name'];
+	}
 	$db->free_result($request);
 
 	return $positions;
@@ -620,9 +636,13 @@ function sa_embed_image($name, $id = false)
 	if (!isset($settings['sa_images_url']))
 	{
 		if (file_exists($settings['theme_dir'] . '/images/sa'))
-			$settings['sa_images_url'] =  $settings['theme_url'] . '/images/sa';
+		{
+			$settings['sa_images_url'] = $settings['theme_url'] . '/images/sa';
+		}
 		else
-			$settings['sa_images_url'] =  $settings['default_theme_url'] . '/images/sa';
+		{
+			$settings['sa_images_url'] = $settings['default_theme_url'] . '/images/sa';
+		}
 	}
 
 	$alt = isset($txt['sa_generic_' . $name]) ? $txt['sa_generic_' . $name] : '';

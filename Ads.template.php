@@ -7,7 +7,7 @@
  * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.1
+ * @version 1.0.3
  */
 
 /**
@@ -21,7 +21,9 @@ function template_ad_position($position)
 
 	// No ad in this position
 	if (!isset($context['ads'][$position]))
+	{
 		return;
+	}
 
 	// A rotating ad at this position
 	if ($context['ads'][$position]['type'] == 1)

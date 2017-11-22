@@ -7,16 +7,19 @@
  * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.1
+ * @version 1.0.3
  */
 
 if (!defined('ELK'))
+{
 	die('No access...');
+}
 
 /**
  * Admin hook, integrate_admin_areas, called from Admin.php
  *
  * - Adds the ads admin menu
+ *
  * @param mixed[] $admin_areas
  */
 function iaa_ads(&$admin_areas)
@@ -51,7 +54,9 @@ function ibia_ads()
 	global $context;
 
 	if (!empty($context['info_center_callbacks']))
+	{
 		array_unshift($context['info_center_callbacks'], 'above_info_center');
+	}
 }
 
 /**
@@ -69,11 +74,15 @@ function ipdc_ads(&$output)
 
 	// First message inside
 	if ($output['id'] == $context['first_message'])
+	{
 		$output['body'] = template_ad_position('inside_first_post') . $output['body'];
+	}
 
 	// After the first message
 	if (++$msg_counter === 2)
+	{
 		template_ad_position('after_first_post');
+	}
 }
 
 /**

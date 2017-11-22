@@ -1,12 +1,12 @@
-###SimpleAds
+## SimpleAds
 
-##License
+### License
 This Elkarte addon is released under a [BSD-3-Clause](http://opensource.org/licenses/BSD-3-Clause) license.
 
-##Introduction
+### Introduction
 This addon allows you to display HTML code in various locations of forum.
 
-##Features
+### Features
 You can define HTML blocks and then set when, where and who will see those blocks
 
 You can position your Ads in the following areas
