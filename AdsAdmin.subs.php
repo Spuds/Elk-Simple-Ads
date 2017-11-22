@@ -7,7 +7,7 @@
  * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.1
+ * @version 1.0.3
  */
 
 if (!defined('ELK'))
@@ -294,7 +294,7 @@ function update_postion_data($status)
 }
 
 /**
- * Return the settings for a postion
+ * Return the settings for a position
  *
  * @param int $id_position
  */
@@ -361,7 +361,7 @@ function get_positions_data($start, $items_per_page, $sort)
 }
 
 /**
- * Returns the number of postions defined in the system
+ * Returns the number of positions defined in the system
  * Callback function for createlist
  */
 function get_positions_count()
@@ -405,6 +405,7 @@ function update_positions_data($update_fields, $values)
  *
  * @param string[] $fields
  * @param mixed[] $values
+ * @throws \Elk_Exception
  */
 function add_position_data($fields, $values)
 {
@@ -525,7 +526,7 @@ function get_ads_actions()
 }
 
 /**
- * Fetch the allowed ad postions for use in templates etc
+ * Fetch the allowed ad positions for use in templates etc
 
  * @return string[]
  */
@@ -597,7 +598,10 @@ function get_ads_body_templates()
 	// Build all the combinations from the above bits
 	$body_templates = array();
 	foreach ($templates as $data)
-		$body_templates[implode(' + ', $data)] = htmlspecialchars($$data[1] . $$data[0]);
+	{
+		$key = implode(' + ', $data);
+		$body_templates[$key] = htmlspecialchars(${$data[1]} . ${$data[0]});
+	}
 
 	return $body_templates;
 }
