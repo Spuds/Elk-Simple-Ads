@@ -7,7 +7,7 @@
  * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.1
+ * @version 1.0.3
  */
 
 if (!defined('ELK'))
@@ -15,8 +15,9 @@ if (!defined('ELK'))
 
 /**
  * Load the ads for display
- * Determins what ads will display in what areas
+ * Determines what ads will display in what areas
  *
+ * @throws \Elk_Exception
  * @return type
  */
 function load_ads()
@@ -34,13 +35,16 @@ function load_ads()
 
 	// Don't ever show adds in for these actions
 	$ignore_actions = array('helpadmin', 'printpage', 'quotefast', 'spellcheck', 'dlattach', 'findmember', 'jsoption', 'requestmembers', 'jslocale', 'xmlpreview', 'suggest', '.xml', 'api', 'xmlhttp', 'verificationcode', 'viewquery', 'viewadminfile');
-	if (isset($_REQUEST['xml']) || isset($_REQUEST['api']) || isset($_REQUEST['debug'])
-			|| (!empty($_REQUEST['sa']) && !empty($_REQUEST['package']) && $_REQUEST['sa'] == 'uninstall2' && strpos($_REQUEST['package'], 'SimpleAds') !== false)
-			|| (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $ignore_actions)))
+	if (isset($_REQUEST['xml'])
+		|| isset($_REQUEST['api'])
+		|| isset($_REQUEST['debug'])
+		|| (!empty($_REQUEST['sa']) && !empty($_REQUEST['package']) && $_REQUEST['sa'] == 'uninstall2' && strpos($_REQUEST['package'], 'SimpleAds') !== false)
+		|| (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $ignore_actions)))
 		return;
 
 	// Ad template and css
-	loadTemplate('Ads', 'manageads');
+	loadTemplate('Ads');
+	loadCSSFile('manageads.css');
 
 	// Get all the active ad positions
 	if (($positions = cache_get_data('sa_positions', 240)) === null)

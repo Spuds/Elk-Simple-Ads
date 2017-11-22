@@ -7,7 +7,7 @@
  * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.2
+ * @version 1.0.3
  */
 
 if (!defined('ELK'))
@@ -31,7 +31,8 @@ class ManageAds_Controller extends Action_Controller
 		require_once(SUBSDIR . '/AdsAdmin.subs.php');
 
 		// Template, css, language, javascript
-		loadTemplate('ManageAds', 'manageads');
+		loadTemplate('ManageAds');
+		loadCSSFile('manageads.css');
 		loadLanguage('ManageAds');
 		loadJavascriptFile('manageads.js', array('defer' => true));
 
