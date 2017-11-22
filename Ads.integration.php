@@ -34,7 +34,7 @@ function iaa_ads(&$admin_areas)
 		'file' => 'ManageAds.controller.php',
 		'controller' => 'ManageAds_Controller',
 		'function' => 'action_index',
-		'icon' => 'ads.png',
+		'icon' => 'spads.png',
 		'permission' => array('admin_forum'),
 		'subsections' => array(
 			'ads' => array($txt['sa_ads_list_title']),
@@ -75,7 +75,7 @@ function ipdc_ads(&$output)
 	// First message inside
 	if ($output['id'] == $context['first_message'])
 	{
-		$output['body'] = template_ad_position('inside_first_post') . $output['body'];
+		$output['body'] = template_ad_position('inside_first_post', false) . $output['body'];
 	}
 
 	// After the first message
