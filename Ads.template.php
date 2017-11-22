@@ -14,15 +14,18 @@
  * Function to return the template and content for a given position
  *
  * @param string $position
+ * @param boolean $echo
  */
-function template_ad_position($position)
+function template_ad_position($position, $echo = true)
 {
 	global $context;
+
+	$output = '';
 
 	// No ad in this position
 	if (!isset($context['ads'][$position]))
 	{
-		return;
+		return null;
 	}
 
 	// A rotating ad at this position
@@ -30,9 +33,9 @@ function template_ad_position($position)
 	{
 		$random = array_rand($context['ads'][$position]['ads']);
 
-		echo '
-	<div id="ad_', $position, '_', $random, '" class="ad ad_', $position, '" >
-		', $context['ads'][$position]['ads'][$random], '
+		$output = '
+	<div id="ad_' . $position . '_' . $random . '" class="ad ad_' . $position . '" >
+		' . $context['ads'][$position]['ads'][$random] . '
 	</div>';
 
 		$context['displayed_ads'][] = $random;
@@ -42,26 +45,45 @@ function template_ad_position($position)
 	{
 		foreach ($context['ads'][$position]['ads'] as $id => $content)
 		{
-			echo '
-	<div id="ad_', $position, '_', $id, '" class="ad ad_', $position, '" >
-		', $content, '
+			$output .= '
+	<div id="ad_' . $position . '_' . $id . '" class="ad ad_' . $position . '" >
+		' . $content . '
 	</div>';
 
 			$context['displayed_ads'][] = $id;
 		}
 	}
+
+	// Echo or return
+	if ($echo)
+	{
+		echo $output;
+	}
+	else
+	{
+		return $output;
+	}
 }
 
+/**
+ * Full header area
+ */
 function template_ads_outer_above()
 {
 	template_ad_position('overall_header');
 }
 
+/**
+ * Full footer area
+ */
 function template_ads_outer_below()
 {
 	template_ad_position('overall_footer');
 }
 
+/**
+ * For Right side adds
+ */
 function template_ads_inner_above()
 {
 	global $context;
@@ -85,6 +107,12 @@ function template_ads_inner_above()
 			echo '
 			</td>';
 		}
+		else
+		{
+			echo '
+			<td class="spads-none" ></td>';
+		}
+
 
 		// td for the "forum" itself
 		echo '
@@ -92,6 +120,9 @@ function template_ads_inner_above()
 	}
 }
 
+/**
+ * For left side adds and above footer
+ */
 function template_ads_inner_below()
 {
 	global $context;
@@ -113,6 +144,11 @@ function template_ads_inner_below()
 			echo '
 			</td>';
 		}
+		else
+		{
+			echo '
+			<td class="spads-none" ></td>';
+		}
 
 		echo '
 		</tr>
@@ -122,11 +158,17 @@ function template_ads_inner_below()
 	template_ad_position('above_footer');
 }
 
+/**
+ * Above the info center
+ */
 function template_ic_above_info_center()
 {
 	template_ad_position('above_info_center');
 }
 
+/**
+ * Below Last Post
+ */
 function template_last_post_below()
 {
 	template_ad_position('after_last_post');
