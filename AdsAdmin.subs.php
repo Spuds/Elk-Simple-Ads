@@ -587,7 +587,7 @@ function get_ads_body_templates()
 		array('information', 'category'),
 	);
 
-	$window = '<div class="description">
+	$window = '<div class="content">
 	{Content}
 </div>';
 
