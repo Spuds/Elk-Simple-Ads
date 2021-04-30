@@ -638,6 +638,6 @@ function sa_embed_image($name, $id = false)
 		}
 	}
 
-	$alt = isset($txt['sa_generic_' . $name]) ? $txt['sa_generic_' . $name] : '';
+	$alt = $txt['sa_generic_' . $name] ?? '';
 	return '<img src="' . $settings['sa_images_url'] . '/' . $name . '.png" alt="' . $alt . '" title="' . $alt . '"' . ($id ? ' id="' . $id . '"' : '') . ' />';
 }
