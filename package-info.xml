@@ -27,7 +27,7 @@
 		<require-file name="ManageAds.template.php" destination="THEMEDIR" />
 		<require-file name="ManageAds.english.php" destination="LANGUAGEDIR/english" />
 		<require-file name="ManageAds.french.php" destination="LANGUAGEDIR/french" />
-		<require-file name="ManageAds.russian.php" destination="LANGUAGEDIR/french" />
+		<require-file name="ManageAds.russian.php" destination="LANGUAGEDIR/russian" />
 		<require-file name="manageads.css" destination="THEMEDIR/css" />
 		<require-file name="ads.js" destination="THEMEDIR/scripts" />
 		<require-file name="manageads.js" destination="THEMEDIR/scripts" />
