@@ -7,7 +7,7 @@
  * @copyright 2008-2021 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 
@@ -29,7 +29,7 @@ class ManageAds_Controller extends Action_Controller
 		require_once(SUBSDIR . '/AdsAdmin.subs.php');
 
 		// Template, css, language, javascript
-		loadTemplate('ManageAds');
+		Templates::instance()->load('ManageAds');
 		loadCSSFile('manageads.css');
 		loadLanguage('ManageAds');
 		loadJavascriptFile('manageads.js', array('defer' => true));
@@ -209,12 +209,14 @@ class ManageAds_Controller extends Action_Controller
 						'class' => 'centertext'
 					),
 					'data' => array(
-						'function' => create_function('$row', '
+						'function' => function($row) {
 							global $context, $scripturl;
 
-							return \'<a href="\' . $scripturl . \'?action=admin;area=ads;sa=ads;status=\' . $row[\'id_ad\'] . \';\' . $context[\'session_var\'] . \'=\' . $context[\'session_id\'] . \'" onclick="sa_change_status(\' . $row[\'id_ad\'] . \', \\\'ad\\\', \\\'\' . $context[\'session_var\'] . \'\\\', \\\'\' . $context[\'session_id\'] . \'\\\'); return false;">\' . sa_embed_image($row[\'status_image\'], \'status_image_\' . $row[\'id_ad\']) . \'
-							</a> <a href="\' . $scripturl . \'?action=admin;area=ads;sa=editad;ad=\' . $row[\'id_ad\'] . \'">\' . sa_embed_image(\'edit\') . \'</a> <a href="\' . $scripturl . \'?action=admin;area=ads;sa=ads;delete=\' . $row[\'id_ad\'] . \';\' . $context[\'session_var\'] . \'=\' . $context[\'session_id\'] . \'">\' . sa_embed_image(\'delete\') . \'</a>\';
-						'),
+							return '
+							<a href="' . $scripturl . '?action=admin;area=ads;sa=ads;status=' . $row['id_ad'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="sa_change_status(' . $row['id_ad'] . ', \'ad\', \'' . $context['session_var'] . '\', \'' . $context['session_id'] . '\'); return false;">' . sa_embed_image($row['status_image'], 'status_image_' . $row['id_ad']) . '</a> 
+							<a href="' . $scripturl . '?action=admin;area=ads;sa=editad;ad=' . $row['id_ad'] . '">' . sa_embed_image('edit') . '</a> 
+							<a href="' . $scripturl . '?action=admin;area=ads;sa=ads;delete=' . $row['id_ad'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . sa_embed_image('delete') . '</a>';
+						},
 						'class' => 'centertext nowrap'
 					),
 				),
@@ -576,17 +578,34 @@ class ManageAds_Controller extends Action_Controller
 						'reverse' => 'type DESC',
 					),
 				),
+				'status' => array(
+					'header' => array(
+						'value' => $txt['sa_ads_status'],
+						'class' => 'centertext'
+					),
+					'data' => array(
+						'function' => function($row) {
+							global $context, $scripturl;
+
+							return '
+							<a href="' . $scripturl . '?action=admin;area=ads;sa=positions;status=' . $row['id_position'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="sa_change_status(' . $row['id_position'] . ', \'position\', \'' . $context['session_var'] . '\', \'' . $context['session_id'] . '\'); return false;">' . sa_embed_image($row['status_image'], 'status_image_' . $row['id_position']) . '</a>';
+						},
+						'class' => 'centertext nowrap',
+					),
+				),
 				'actions' => array(
 					'header' => array(
 						'value' => $txt['sa_generic_actions'],
 						'class' => 'centertext'
 					),
 					'data' => array(
-						'function' => create_function('$row', '
+						'function' => function($row) {
 							global $context, $scripturl;
 
-							return \'<a href="\' . $scripturl . \'?action=admin;area=ads;sa=positions;status=\' . $row[\'id_position\'] . \';\' . $context[\'session_var\'] . \'=\' . $context[\'session_id\'] . \'" onclick="sa_change_status(\' . $row[\'id_position\'] . \', \\\'position\\\', \\\'\' . $context[\'session_var\'] . \'\\\', \\\'\' . $context[\'session_id\'] . \'\\\'); return false;">\' . sa_embed_image($row[\'status_image\'], \'status_image_\' . $row[\'id_position\']) . \'</a> <a href="\' . $scripturl . \'?action=admin;area=ads;sa=editposition;position=\' . $row[\'id_position\'] . \'">\' . sa_embed_image(\'edit\') . \'</a> <a href="\' . $scripturl . \'?action=admin;area=ads;sa=positions;delete=\' . $row[\'id_position\'] . \';\' . $context[\'session_var\'] . \'=\' . $context[\'session_id\'] . \'">\' . sa_embed_image(\'delete\') . \'</a>\';
-						'),
+							return '
+							<a href="' . $scripturl . '?action=admin;area=ads;sa=editposition;position=' . $row['id_position'] . '">' . sa_embed_image('edit') . '</a> 
+							<a href="' . $scripturl . '?action=admin;area=ads;sa=positions;delete=' . $row['id_position'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . sa_embed_image('delete') . '</a>';
+						},
 						'class' => 'centertext nowrap',
 					),
 				),

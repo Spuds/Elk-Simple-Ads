@@ -47,7 +47,7 @@ td.spads-none {
 	padding-top: 4px;
 }
 
-td.spads-left > div:first-child > h3.secondary_header, td.spads-right > div:first-child > h3.secondary_header  {
+td.spads-left > div:first-child > h3.secondary_header, td.spads-right > div:first-child > h3.secondary_header {
 	margin-top: 0;
 }
 

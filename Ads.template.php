@@ -4,10 +4,10 @@
  * @package SimpleAds
  *
  * @author [SiNaN]
- * @copyright 2008-2014 by: [SiNaN] (sinan@simplemachines.org)
+ * @copyright 2008-2021 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 /**
@@ -55,14 +55,12 @@ function template_ad_position($position, $echo = true)
 	}
 
 	// Echo or return
-	if ($echo)
-	{
-		echo $output;
-	}
-	else
+	if (!$echo)
 	{
 		return $output;
 	}
+
+	echo $output;
 }
 
 /**

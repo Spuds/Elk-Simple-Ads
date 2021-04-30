@@ -8,16 +8,16 @@
  * @copyright 2008-2021 by: [SiNaN] (sinan@simplemachines.org)
  * @license BSD 3-clause
  *
- * @version 1.0.3
+ * @version 1.0.4
  */
 -->
 <package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:elk="http://www.elkarte.net/">
 	<id>[SiNaN]:SimpleAds</id>
 	<name>SimpleAds</name>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<type>modification</type>
 
-	<install for="1.0 - 1.1.99">
+	<install for="1.1 - 1.1.99">
 		<readme parsebbc="true">readme.txt</readme>
 		<require-file name="Ads.integration.php" destination="SOURCEDIR" />
 		<require-file name="ManageAds.controller.php" destination="ADMINDIR" />
@@ -43,7 +43,7 @@
 		<hook hook="integrate_display_topic" file="SOURCEDIR/Ads.integration.php" function="idt_ads" />
 		<redirect url="index.php?action=admin;area=ads;sa=ads" timeout="5000" />
 	</install>
-	<uninstall for="1.0 - 1.1.99">
+	<uninstall for="1.1 - 1.1.99">
 		<hook reverse="true" hook="integrate_theme_include" function="SUBSDIR/Ads.subs.php" />
 		<hook reverse="true" hook="integrate_load_theme" function="load_ads" />
 		<hook reverse="true" hook="integrate_admin_areas" file="SOURCEDIR/AdsIntegration.php" function="iaa_ads"/>
