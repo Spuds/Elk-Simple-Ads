@@ -10,17 +10,12 @@
  * @version 1.0.3
  */
 
-if (!defined('ELK'))
-{
-	die('No access...');
-}
-
 /**
  * Admin hook, integrate_admin_areas, called from Admin.php
  *
  * - Adds the ads admin menu
  *
- * @param mixed[] $admin_areas
+ * @param array $admin_areas
  */
 function iaa_ads(&$admin_areas)
 {
@@ -63,7 +58,7 @@ function ibia_ads()
  * integrate_prepare_display_context, called from the message display callback
  * used to add the inside first and after first post ads
  *
- * @param mixed[] $output
+ * @param array $output
  */
 function ipdc_ads(&$output)
 {

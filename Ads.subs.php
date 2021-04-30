@@ -10,17 +10,12 @@
  * @version 1.0.3
  */
 
-if (!defined('ELK'))
-{
-	die('No access...');
-}
-
 /**
  * Load the ads for display
  * Determines what ads will display in what areas
  *
- * @throws \Elk_Exception
  * @return boolean
+ * @throws \Elk_Exception
  */
 function load_ads()
 {
@@ -74,7 +69,7 @@ function load_ads()
 		cache_put_data('sa_positions', $positions, 240);
 	}
 
-	// No postions, done
+	// No positions, done
 	if (empty($positions))
 	{
 		return true;
@@ -128,7 +123,7 @@ function load_ads()
 				continue;
 			}
 
-			// Dont want right/left ads on the portal
+			// Do not want right/left ads on the portal
 			if (isset($portal) && in_array($position, array(6, 7)))
 			{
 				continue;
@@ -178,8 +173,8 @@ function load_ads()
  * Updates the db counter for this ad
  * Used by xml
  *
- * @throws \Elk_Exception
  * @return null
+ * @throws \Elk_Exception
  */
 function update_ad_clicks()
 {
@@ -237,7 +232,7 @@ function update_ad_impressions()
  * - its max clicks
  * Updated the db to set expired flag if any of these conditions are met
  *
- * @param mixed[] $data
+ * @param array $data
  * @return boolean
  */
 function is_ad_expired($data)
@@ -289,6 +284,12 @@ function is_ad_allowed($allowed, $denied)
 	static $group_cache;
 
 	$cache_key = $allowed . $denied;
+
+	// Account for guests
+	if (empty($user_info['groups']))
+	{
+		$user_info['groups'] = array();
+	}
 
 	if (!isset($group_cache[$cache_key]))
 	{

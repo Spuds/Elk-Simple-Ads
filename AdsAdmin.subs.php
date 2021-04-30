@@ -10,16 +10,11 @@
  * @version 1.0.3
  */
 
-if (!defined('ELK'))
-{
-	die('No access...');
-}
-
 /**
  * Insert an ad
  *
- * @param mixed[] $fields
- * @param mixed[] $values
+ * @param array $fields
+ * @param array $values
  */
 function add_ad_data($fields, $values)
 {
@@ -36,8 +31,8 @@ function add_ad_data($fields, $values)
 /**
  * Update an existing ad with new data
  *
- * @param mixed[] $update_fields
- * @param mixed[] $values
+ * @param array $update_fields
+ * @param array $values
  */
 function update_ad_data($update_fields, $values)
 {
@@ -164,7 +159,7 @@ function get_ads_count()
  * Returns an ads expiration time
  *
  * @param int $duration
- * @return mixed[]
+ * @return array
  */
 function get_ad_expiration($duration)
 {
@@ -393,7 +388,7 @@ function get_positions_count()
  * Update a positions data
  *
  * @param string[] $update_fields
- * @param mixed[] $values
+ * @param array $values
  */
 function update_positions_data($update_fields, $values)
 {
@@ -413,7 +408,7 @@ function update_positions_data($update_fields, $values)
  * Add a new position / namespace to the system
  *
  * @param string[] $fields
- * @param mixed[] $values
+ * @param array $values
  * @throws \Elk_Exception
  */
 function add_position_data($fields, $values)
@@ -517,7 +512,7 @@ function get_ads_actions()
 {
 	global $txt;
 
-	$actions = array(
+	return array(
 		'board_index' => $txt['sa_generic_board_index'],
 		'recent' => $txt['recent_posts'],
 		'unread' => $txt['unread_topics_visit'],
@@ -536,8 +531,6 @@ function get_ads_actions()
 		'help' => $txt['help'],
 		'who' => $txt['who_title'],
 	);
-
-	return $actions;
 }
 
 /**
@@ -646,7 +639,5 @@ function sa_embed_image($name, $id = false)
 	}
 
 	$alt = isset($txt['sa_generic_' . $name]) ? $txt['sa_generic_' . $name] : '';
-	$image = '<img src="' . $settings['sa_images_url'] . '/' . $name . '.png" alt="' . $alt . '" title="' . $alt . '"' . ($id ? ' id="' . $id . '"' : '') . ' />';
-
-	return $image;
+	return '<img src="' . $settings['sa_images_url'] . '/' . $name . '.png" alt="' . $alt . '" title="' . $alt . '"' . ($id ? ' id="' . $id . '"' : '') . ' />';
 }
